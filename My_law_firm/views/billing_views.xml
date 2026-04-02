@@ -1,5 +1,12 @@
+<?xml version = '1.0' encoding="utf-8"?>
+
 <odoo>
     <data>
+        <delete
+            model="ir.actions.report"
+            search="[('model', '=', 'law.billing'), ('binding_type', '=', 'report'), ('name', '=', 'Billing Report')]"
+        />
+
         <record id="view_kanban_law_billing" model="ir.ui.view">
             <field name="name">law.billing.kanban</field>
             <field name="model">law.billing</field>
@@ -23,6 +30,13 @@
             <field name="model">law.billing</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="action_mark_paid"
+                                string="Mark Paid"
+                                type="object"
+                                class="btn-primary"
+                                invisible="status == 'paid'"/>
+                    </header>
                     <sheet>
                         <group>
                             <field name="name"/>
@@ -36,6 +50,8 @@
                             <field name="currency_id"/>
                             <field name="billing_date_and_time"/>
                             <field name="status"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="report_attachment_id" readonly="1"/>
                         </group>
 
                         <group>
@@ -64,5 +80,93 @@
             <field name="res_model">law.billing</field>
             <field name="view_mode">kanban,list,form</field>
         </record>
+
+        <record id="paperformat_law_billing" model="report.paperformat">
+            <field name="name">Law Billing A4</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">20</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <record id="action_report_law_billing" model="ir.actions.report">
+            <field name="name">Billing Report</field>
+            <field name="model">law.billing</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">My_law_firm.report_law_billing_document</field>
+            <field name="report_file">My_law_firm.report_law_billing_document</field>
+            <field name="paperformat_id" ref="paperformat_law_billing"/>
+            <field name="binding_model_id" ref="model_law_billing"/>
+            <field name="binding_type">report</field>
+        </record>
+        <function model="ir.actions.report" name="unlink">
+            <function model="ir.actions.report" name="search">
+                <value eval="[('model', '=', 'law.billing'), ('report_name', '=', 'My_law_firm.report_law_billing_document'), ('id', '!=', ref('action_report_law_billing'))]"/>
+            </function>
+        </function>
+
+        <record id="action_report_law_billing_invoice" model="ir.actions.report">
+            <field name="name">Invoice</field>
+            <field name="model">law.billing</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">My_law_firm.report_law_billing_invoice_document</field>
+            <field name="report_file">My_law_firm.report_law_billing_invoice_document</field>
+            <field name="paperformat_id" ref="paperformat_law_billing"/>
+            <field name="binding_model_id" ref="model_law_billing"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_law_billing_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Billing Report</h2>
+                            <p><strong>Bill Ref:</strong> <span t-esc="o.name"/></p>
+                            <p><strong>Client:</strong> <span t-esc="o.client_id.name"/></p>
+                            <p><strong>Case:</strong> <span t-esc="o.case_id.name"/></p>
+                            <p><strong>Amount:</strong> <span t-esc="o.amount"/></p>
+                            <p><strong>Status:</strong> <span t-esc="o.status"/></p>
+                            <t t-if="o.invoice_id">
+                                <p><strong>Invoice Number:</strong> <span t-esc="o.invoice_id.name"/></p>
+                                <p><strong>Invoice Date:</strong> <span t-esc="o.invoice_id.invoice_date or '-'"/></p>
+                                <p><strong>Invoice Status:</strong> <span t-esc="o.invoice_id.state"/></p>
+                                <p><strong>Invoice Total:</strong> <span t-esc="o.invoice_id.amount_total"/></p>
+                            </t>
+                            <t t-else="">
+                                <p><strong>Invoice:</strong> -</p>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_law_billing_invoice_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Invoice</h2>
+                            <t t-if="o.invoice_id">
+                                <p><strong>Invoice Number:</strong> <span t-esc="o.invoice_id.name or '-'"/></p>
+                                <p><strong>Invoice Date:</strong> <span t-esc="o.invoice_id.invoice_date or '-'"/></p>
+                                <p><strong>Customer:</strong> <span t-esc="o.invoice_id.partner_id.name or '-'"/></p>
+                                <p><strong>Billing Reference:</strong> <span t-esc="o.name"/></p>
+                                <p><strong>Total Amount:</strong> <span t-esc="o.invoice_id.amount_total"/></p>
+                                <p><strong>Status:</strong> <span t-esc="o.invoice_id.state"/></p>
+                            </t>
+                            <t t-else="">
+                                <p>No invoice has been generated for this billing record yet.</p>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
     </data>
 </odoo>

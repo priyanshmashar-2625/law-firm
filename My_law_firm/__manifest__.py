@@ -6,6 +6,7 @@
 Law Firm modules for odoo.
 ===================================================
 """,
+    'depends': ['base', 'account'],
     'data': [
         'views/client_views.xml',
         'views/case_views.xml',
