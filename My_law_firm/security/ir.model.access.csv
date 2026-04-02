@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_law_client,access_law_client,model_law_client,base.group_user,1,1,1,1
+access_law_case,access_law_case,model_law_case,base.group_user,1,1,1,1
+access_law_hearing,access_law_hearing,model_law_hearing,base.group_user,1,1,1,1
+access_law_document,access_law_document,model_law_document,base.group_user,1,1,1,1
+access_law_billing,access_law_billing,model_law_billing,base.group_user,1,1,1,1

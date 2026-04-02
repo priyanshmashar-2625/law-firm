@@ -1,0 +1,8 @@
+<odoo>
+    <menuitem id="law_main_menu" name="Law Firm"/>
+    <menuitem id="law_client_menu" name="Clients" parent="law_main_menu" action="action_law_client"/>
+    <menuitem id="law_case_menu" name="Cases" parent="law_main_menu" action="action_law_case"/>
+    <menuitem id="law_hearing_menu" name="Hearings" parent="law_main_menu" action="action_law_hearing"/>
+    <menuitem id="law_document_menu" name="Documents" parent="law_main_menu" action="action_law_document"/>
+    <menuitem id="law_billing_menu" name="Billings" parent="law_main_menu" action="action_law_billing"/>
+</odoo>

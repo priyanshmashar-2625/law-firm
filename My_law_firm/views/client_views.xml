@@ -1,0 +1,93 @@
+<odoo>
+    <record id="view_kanban_law_client" model="ir.ui.view">
+        <field name="name">law.client.kanban</field>
+        <field name="model">law.client</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card">
+                        <div>
+                            <strong><field name="name"/></strong>
+                            <div><field name="email"/></div>
+                            <div><field name="phone"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_form_law_client" model="ir.ui.view">
+        <field name="name">law.client.form</field>
+        <field name="model">law.client</field>
+        <field name="arch" type="xml">
+        <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="phone"/>
+                        <field name="client_type"/>
+                    </group>
+                    <group>
+                        <field name="address"/>
+                    </group>
+                    <notebook>
+                        <page string="Cases">
+                            <field name="case_ids"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_list_law_client" model="ir.ui.view">
+        <field name="name">law.client.list</field>
+        <field name="model">law.client</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="client_type"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_search_law_client" model="ir.ui.view">
+        <field name="name">law.client.search</field>
+        <field name="model">law.client</field>
+        <field name="arch" type="xml">
+            <search>
+
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+
+                <filter string="Individuals"
+                    domain="[('client_type','=','individual')]"/>
+
+                <filter string="Companies"
+                    domain="[('client_type','=','company')]"/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Client Type"
+                        context="{'group_by':'client_type'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="action_law_client" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">law.client</field>
+        <field name="view_mode">kanban,list,form</field>
+        <fiels name="search_view_id" ref="view_search_law_client"/>
+    </record>
+
+</odoo>

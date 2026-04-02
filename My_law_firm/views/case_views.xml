@@ -1,0 +1,107 @@
+<odoo>
+    <record id="view_kanban_law_Case" model="ir.ui.view">
+        <field name="name">law.case.kanban</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card">
+                        <div>
+                            <strong><field name="name"/></strong>
+                            <div>Status: <field name="status"/></div>
+                            <div>Client: <field name="client_id"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_form_law_case" model="ir.ui.view">
+        <field name="name">law.case.form</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="case_number"/>
+                        <field name="client_id"/>
+                        <field name="opponent_name"/>
+                    </group>
+                    <group>
+                        <field name="case_type"/>
+                        <field name="court_name"/>
+                        <field name="filing_date"/>
+                        <field name="next_hearing_date"/>
+                        <field name="status"/>
+                    </group>
+                    <notebook>
+                        <page string="Hearings">
+                            <field name="hearing_ids"/>
+                        </page>
+                        <page string="Documents">
+                            <field name="document_ids"/>
+                        </page>
+                        <page string="Billing">
+                            <field name="billing_ids"/>
+                        </page>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_list_law_case" model="ir.ui.view">
+        <field name="name">law.case.list</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="case_number"/>
+                <field name="client_id"/>
+                <field name="case_type"/>
+                <field name="status"/>
+                <field name="next_hearing_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_search_law_case" model="ir.ui.view">
+        <field name="name">law.case.search</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_number"/>
+                <field name="client_id"/>
+                <field name="case_type"/>
+                <filter string="Active Cases" name="active_cases"
+                    domain="[('status','=','active')]"/>
+                <filter string="Closed Cases" name="closed_cases"
+                    domain="[('status','=','closed')]"/>
+                <filter string="Draft Cases" name="draft_cases"
+                    domain="[('status','=','draft')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Client"
+                        context="{'group_by':'client_id'}"/>
+                    <filter string="Status"
+                        context="{'group_by':'status'}"/>
+                    <filter string="Case Type"
+                        context="{'group_by':'case_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_law_case" model="ir.actions.act_window">
+        <field name="name">Cases</field>
+        <field name="res_model">law.case</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_search_law_case"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,88 @@
+<odoo>
+    <record id="view_kanban_law_hearing" model="ir.ui.view">
+        <field name="name">law.hearing.kanban</field>
+        <field name="model">law.hearing</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card">
+                        <div>
+                            <strong><field name="name"/></strong>
+                            <div><field name="hearing_date"/></div>
+                            <div><field name="outcome"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_form_law_hearing" model="ir.ui.view">
+        <field name="name">law.hearing.form</field>
+        <field name="model">law.hearing</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="case_id"/>
+                        <field name="hearing_date"/>
+                        <field name="judge_name"/>
+                        <field name="court_room"/>
+                        <field name="outcome"/>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_list_law_hearing" model="ir.ui.view">
+        <field name="name">law.hearing.list</field>
+        <field name="model">law.hearing</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="hearing_date"/>
+                <field name="judge_name"/>
+                <field name="outcome"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_search_law_hearing" model="ir.ui.view">
+        <field name="name">law.hearing.search</field>
+        <field name="model">law.hearing</field>
+        <field name="arch" type="xml">
+            <search>
+
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="judge_name"/>
+
+                <filter string="Pending"
+                    domain="[('outcome','=','pending')]"/>
+
+                <filter string="Completed"
+                    domain="[('outcome','=','completed')]"/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Case"
+                        context="{'group_by':'case_id'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="action_law_hearing" model="ir.actions.act_window">
+        <field name="name">Hearings</field>
+        <field name="res_model">law.hearing</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_search_law_hearing"/>
+    </record>
+
+</odoo>
