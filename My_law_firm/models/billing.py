@@ -22,7 +22,7 @@ class LawBilling(models.Model):
         default=lambda self: self.env.company.currency_id.id,
         required=True,
     )
-    amount = fields.Monetary(String="Amount", currency_field="currency_id")
+    amount = fields.Monetary(string="Amount", currency_field="currency_id")
 
     billing_type = fields.Selection(
         [
@@ -32,7 +32,7 @@ class LawBilling(models.Model):
         string="Billing Type",
     )
 
-    billing_date_and_time = fields.Datetime(String="Billing date and time")
+    billing_date_and_time = fields.Datetime(string="Billing date and time")
 
     status= fields.Selection(
         [

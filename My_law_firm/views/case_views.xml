@@ -22,6 +22,21 @@
         <field name="model">law.case</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="action_start"
+                            string="Start Case"
+                            type="object"
+                            states="draft"
+                            class="btn-primary"/>
+
+                    <button name="action_close"
+                            string="Close Case"
+                            type="object"
+                            states="in_progress"
+                            class="btn-success"/>
+                            
+                    <field name="status" widget="statusbar" statusbar_visible="draft,active,closed"/>
+                </header>
                 <sheet>
                     <group>
                         <field name="name"/>

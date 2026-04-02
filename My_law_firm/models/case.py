@@ -71,3 +71,11 @@ class LawCase(models.Model):
             if case.hearing_ids:
                 dates = case.hearing_ids.mapped("hearing_date")
                 case.next_hearing_date = max(dates)
+
+    def action_start(self):
+        for rec in self:
+            rec.status = "active"
+
+    def action_close(self):
+        for rec in self:
+            rec.status = "closed"
