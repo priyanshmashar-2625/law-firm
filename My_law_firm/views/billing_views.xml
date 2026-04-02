@@ -1,67 +1,68 @@
 <odoo>
-    <record id="view_kanban_law_billing" model="ir.ui.view">
-        <field name="name">law.billing.kanban</field>
-        <field name="model">law.billing</field>
-        <field name="arch" type="xml">
-            <kanban>
-                <templates>
-                    <t t-name="card">
-                        <div>
-                            <strong><field name="name"/></strong>
-                            <div>Amount: <field name="amount"/></div>
-                            <div>Status: <field name="status"/></div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
+    <data>
+        <record id="view_kanban_law_billing" model="ir.ui.view">
+            <field name="name">law.billing.kanban</field>
+            <field name="model">law.billing</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <templates>
+                        <t t-name="card">
+                            <div>
+                                <strong><field name="name"/></strong>
+                                <div>Amount: <field name="amount"/></div>
+                                <div>Status: <field name="status"/></div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
 
-    <record id="view_form_law_billing" model="ir.ui.view">
-        <field name="name">law.billing.form</field>
-        <field name="model">law.billing</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="case_id"/>
-                        <field name="client_id"/>
-                        <field name="billing_type"/>
-                    </group>
+        <record id="view_form_law_billing" model="ir.ui.view">
+            <field name="name">law.billing.form</field>
+            <field name="model">law.billing</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="case_id"/>
+                            <field name="client_id"/>
+                            <field name="billing_type"/>
+                        </group>
 
-                    <group>
-                        <field name="amount"/>
-                        <field name="currency_id"/>
-                        <field name="billing_date_and_time"/>
-                        <field name="status"/>
-                    </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="billing_date_and_time"/>
+                            <field name="status"/>
+                        </group>
 
-                    <group>
-                        <field name="notes"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+                        <group>
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
-    <record id="view_list_law_billing" model="ir.ui.view">
-        <field name="name">law.billing.list</field>
-        <field name="model">law.billing</field>
-        <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="case_id"/>
-                <field name="amount"/>
-                <field name="status"/>
-            </list>
-        </field>
-    </record>
+        <record id="view_list_law_billing" model="ir.ui.view">
+            <field name="name">law.billing.list</field>
+            <field name="model">law.billing</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="case_id"/>
+                    <field name="amount"/>
+                    <field name="status"/>
+                </list>
+            </field>
+        </record>
 
-    <record id="action_law_billing" model="ir.actions.act_window">
-        <field name="name">Billings</field>
-        <field name="res_model">law.billing</field>
-        <field name="view_mode">kanban,list,form</field>
-    </record>
-
+        <record id="action_law_billing" model="ir.actions.act_window">
+            <field name="name">Billings</field>
+            <field name="res_model">law.billing</field>
+            <field name="view_mode">kanban,list,form</field>
+        </record>
+    </data>
 </odoo>

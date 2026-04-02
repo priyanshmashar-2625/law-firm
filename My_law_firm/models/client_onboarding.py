@@ -1,8 +1,8 @@
 from odoo import fields, models
 
 class LawClient(models.Model):
-    __name = "law.client"
-    __description = "Law Client"
+    _name = "law.client"
+    _description = "Law Client"
     
     name = fields.Char(string="Client Name", required=True)
     email = fields.Char(string="Email")
