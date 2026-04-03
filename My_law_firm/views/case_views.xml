@@ -159,6 +159,7 @@
                                         <th>Bill Ref</th>
                                         <th>Billing Type</th>
                                         <th>Billing Date</th>
+                                        <th>Invoice</th>
                                         <th class="text-end">Amount</th>
                                     </tr>
                                 </thead>
@@ -167,6 +168,7 @@
                                         <td><span t-esc="bill.name"/></td>
                                         <td><span t-esc="bill.billing_type or '-'"/></td>
                                         <td><span t-esc="bill.billing_date_and_time or '-'"/></td>
+                                        <td><span t-esc="bill.invoice_id.name or '-'"/></td>
                                         <td class="text-end"><span t-esc="bill.amount"/></td>
                                     </tr>
                                 </tbody>
@@ -183,7 +185,23 @@
                                 <p><strong>Invoice Grand Total:</strong> <span t-esc="o.closure_invoice_id.amount_total"/></p>
                             </t>
                             <t t-else="">
-                                <p>No closure invoice generated.</p>
+                                <t t-set="bill_invoices" t-value="paid_bills.mapped('invoice_id')"/>
+                                <t t-if="bill_invoices">
+                                    <p><strong>Closure Invoice:</strong> Not generated yet.</p>
+                                    <p><strong>Paid Bill Invoices:</strong></p>
+                                    <ul>
+                                        <li t-foreach="bill_invoices" t-as="inv">
+                                            <span t-esc="inv.name or '-'"/> |
+                                            <span t-esc="inv.invoice_date or '-'"/> |
+                                            <span t-esc="inv.state or '-'"/> |
+                                            <span t-esc="inv.amount_total"/>
+                                        </li>
+                                    </ul>
+                                    <p><strong>Total of Invoice Amounts:</strong> <span t-esc="sum(bill_invoices.mapped('amount_total'))"/></p>
+                                </t>
+                                <t t-else="">
+                                    <p>No invoice found for paid bills.</p>
+                                </t>
                             </t>
                         </div>
                     </t>

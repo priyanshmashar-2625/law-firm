@@ -1,7 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
-
 class LawBilling(models.Model):
     _name = "law.billing"
     _description = "Case Billing"
@@ -43,6 +42,36 @@ class LawBilling(models.Model):
         ],
         string="Status",
         default="draft",
+    )
+
+    tax_ids = fields.Many2many(
+        comodel_name="account.tax",
+        string="Taxes",
+        domain=[("type_tax_use", "=", "sale")],
+    )
+
+    discount_percent = fields.Float(string="Discount (%)", default=0.0)
+
+    subtotal_amount = fields.Monetary(
+        string="Subtotal",
+        currency_field="currency_id",
+        compute="_compute_amount_breakdown",
+        store=True,
+        readonly=True,
+    )
+    tax_amount = fields.Monetary(
+        string="Tax Amount",
+        currency_field="currency_id",
+        compute="_compute_amount_breakdown",
+        store=True,
+        readonly=True,
+    )
+    net_amount = fields.Monetary(
+        string="Net Total",
+        currency_field="currency_id",
+        compute="_compute_amount_breakdown",
+        store=True,
+        readonly=True,
     )
 
     notes = fields.Html(string="Notes")
@@ -143,6 +172,8 @@ class LawBilling(models.Model):
                             "name": self.name or "Legal Billing",
                             "quantity": 1.0,
                             "price_unit": self.amount,
+                            "discount": self.discount_percent or 0.0,
+                            "tax_ids": [(6, 0, self.tax_ids.ids)],
                             "account_id": income_account.id,
                         },
                     )
@@ -153,3 +184,35 @@ class LawBilling(models.Model):
             self.invoice_id = invoice.id
 
         self.report_attachment_id = False
+
+    @api.depends("amount", "discount_percent", "tax_ids", "currency_id")
+    def _compute_amount_breakdown(self):
+        for rec in self:
+            base_amount = rec.amount or 0.0
+            discount_amt = (base_amount * (rec.discount_percent or 0.0)) / 100.0
+            subtotal = base_amount - discount_amt
+
+            if rec.tax_ids:
+                tax_data = rec.tax_ids.compute_all(
+                    subtotal,
+                    currency=rec.currency_id,
+                    quantity=1.0,
+                    product=False,
+                    partner=False,
+                )
+
+                total_excluded = tax_data.get("total_excluded", subtotal)
+                total_included = tax_data.get("total_included", subtotal)
+            else:
+                total_excluded = subtotal
+                total_included = subtotal
+
+            rec.subtotal_amount = total_excluded
+            rec.tax_amount = total_included - total_excluded
+            rec.net_amount = total_included
+
+    @api.constrains("discount_percent")
+    def _check_discount_percent(self):
+        for rec in self:
+            if rec.discount_percent < 0 or rec.discount_percent > 100:
+                raise ValidationError("Discount must be between 0 and 100.")

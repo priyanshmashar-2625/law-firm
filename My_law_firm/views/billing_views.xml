@@ -43,10 +43,15 @@
                             <field name="case_id"/>
                             <field name="client_id"/>
                             <field name="billing_type"/>
+                            <field name="discount_percent"/>
+                            <field name="tax_ids" widget="many2many_tags"/>
                         </group>
 
                         <group>
                             <field name="amount"/>
+                            <field name="subtotal_amount" readonly="1"/>
+                            <field name="tax_amount" readonly="1"/>
+                            <field name="net_amount" readonly="1"/>
                             <field name="currency_id"/>
                             <field name="billing_date_and_time"/>
                             <field name="status"/>
@@ -70,6 +75,9 @@
                     <field name="name"/>
                     <field name="case_id"/>
                     <field name="amount"/>
+                    <field name="discount_percent"/>
+                    <field name="tax_amount"/>
+                    <field name="net_amount"/>
                     <field name="status"/>
                 </list>
             </field>
@@ -129,7 +137,11 @@
                             <p><strong>Bill Ref:</strong> <span t-esc="o.name"/></p>
                             <p><strong>Client:</strong> <span t-esc="o.client_id.name"/></p>
                             <p><strong>Case:</strong> <span t-esc="o.case_id.name"/></p>
-                            <p><strong>Amount:</strong> <span t-esc="o.amount"/></p>
+                            <p><strong>Base Amount:</strong> <span t-esc="o.amount"/></p>
+                            <p><strong>Discount:</strong> <span t-esc="o.discount_percent"/>%</p>
+                            <p><strong>Subtotal:</strong> <span t-esc="o.subtotal_amount"/></p>
+                            <p><strong>Tax Amount:</strong> <span t-esc="o.tax_amount"/></p>
+                            <p><strong>Net Total:</strong> <span t-esc="o.net_amount"/></p>
                             <p><strong>Status:</strong> <span t-esc="o.status"/></p>
                             <t t-if="o.invoice_id">
                                 <p><strong>Invoice Number:</strong> <span t-esc="o.invoice_id.name"/></p>
@@ -157,6 +169,11 @@
                                 <p><strong>Invoice Date:</strong> <span t-esc="o.invoice_id.invoice_date or '-'"/></p>
                                 <p><strong>Customer:</strong> <span t-esc="o.invoice_id.partner_id.name or '-'"/></p>
                                 <p><strong>Billing Reference:</strong> <span t-esc="o.name"/></p>
+                                <p><strong>Base Amount:</strong> <span t-esc="o.amount"/></p>
+                                <p><strong>Discount:</strong> <span t-esc="o.discount_percent"/>%</p>
+                                <p><strong>Subtotal:</strong> <span t-esc="o.subtotal_amount"/></p>
+                                <p><strong>Tax Amount:</strong> <span t-esc="o.tax_amount"/></p>
+                                <p><strong>Net Total:</strong> <span t-esc="o.net_amount"/></p>
                                 <p><strong>Total Amount:</strong> <span t-esc="o.invoice_id.amount_total"/></p>
                                 <p><strong>Status:</strong> <span t-esc="o.invoice_id.state"/></p>
                             </t>
