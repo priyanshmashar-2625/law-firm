@@ -6,18 +6,19 @@
 Law Firm modules for odoo.
 ===================================================
 """,
-    'depends': ['base', 'account'],
-    'data': [
-        'views/client_views.xml',
-        'views/case_views.xml',
-        'views/hearing_views.xml',
-        'views/document_views.xml',
-        'views/billing_views.xml',
-        'security/ir.model.access.csv',
-        'views/my_law_firm_menu.xml',
+    "depends": ["base", "account"],
+    "data": [
+        "views/client_views.xml",
+        "views/case_views.xml",
+        "views/hearing_views.xml",
+        "views/document_views.xml",
+        "views/mark_paid_wizard_views.xml",
+        "views/billing_views.xml",
+        "security/ir.model.access.csv",
+        "views/my_law_firm_menu.xml",
     ],
     "sequence": 1,
     "installable": True,
     "application": True,
-    'license': 'LGPL-3',
+    "license": "LGPL-3",
 }

@@ -54,6 +54,7 @@
                             <field name="filing_date"/>
                             <field name="next_hearing_date"/>
                             <field name="status"/>
+                            <field name="closure_invoice_id" readonly="1"/>
                         </group>
                         <notebook>
                             <page string="Hearings">
@@ -126,5 +127,68 @@
             <field name="view_mode">kanban,list,form</field>
             <field name="search_view_id" ref="view_search_law_case"/>
         </record>
+
+        <record id="action_report_law_case_closure" model="ir.actions.report">
+            <field name="name">Case Closure Report</field>
+            <field name="model">law.case</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">My_law_firm.report_law_case_closure_document</field>
+            <field name="report_file">My_law_firm.report_law_case_closure_document</field>
+            <field name="binding_model_id" ref="model_law_case"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_law_case_closure_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Case Closure Report</h2>
+                            <p><strong>Case:</strong> <span t-esc="o.name"/></p>
+                            <p><strong>Case Number:</strong> <span t-esc="o.case_number or '-'"/></p>
+                            <p><strong>Client:</strong> <span t-esc="o.client_id.name or '-'"/></p>
+                            <p><strong>Case Type:</strong> <span t-esc="o.case_type or '-'"/></p>
+                            <p><strong>Court:</strong> <span t-esc="o.court_name or '-'"/></p>
+                            <p><strong>Status:</strong> <span t-esc="o.status"/></p>
+
+                            <t t-set="paid_bills" t-value="o.billing_ids.filtered_domain([('status', '=', 'paid')])"/>
+                            <h3>Paid Bills</h3>
+                            <table class="table table-sm o_main_table">
+                                <thead>
+                                    <tr>
+                                        <th>Bill Ref</th>
+                                        <th>Billing Type</th>
+                                        <th>Billing Date</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="paid_bills" t-as="bill">
+                                        <td><span t-esc="bill.name"/></td>
+                                        <td><span t-esc="bill.billing_type or '-'"/></td>
+                                        <td><span t-esc="bill.billing_date_and_time or '-'"/></td>
+                                        <td class="text-end"><span t-esc="bill.amount"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <t t-set="grand_total" t-value="sum(paid_bills.mapped('amount'))"/>
+                            <p><strong>Grand Total (Paid Bills):</strong> <span t-esc="grand_total"/></p>
+
+                            <h3>Closure Invoice</h3>
+                            <t t-if="o.closure_invoice_id">
+                                <p><strong>Invoice Number:</strong> <span t-esc="o.closure_invoice_id.name or '-'"/></p>
+                                <p><strong>Invoice Date:</strong> <span t-esc="o.closure_invoice_id.invoice_date or '-'"/></p>
+                                <p><strong>Invoice Status:</strong> <span t-esc="o.closure_invoice_id.state or '-'"/></p>
+                                <p><strong>Invoice Grand Total:</strong> <span t-esc="o.closure_invoice_id.amount_total"/></p>
+                            </t>
+                            <t t-else="">
+                                <p>No closure invoice generated.</p>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
     </data>
 </odoo>

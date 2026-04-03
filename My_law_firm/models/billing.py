@@ -1,6 +1,7 @@
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
+
 class LawBilling(models.Model):
     _name = "law.billing"
     _description = "Case Billing"
@@ -35,7 +36,7 @@ class LawBilling(models.Model):
 
     billing_date_and_time = fields.Datetime(string="Billing date and time")
 
-    status= fields.Selection(
+    status = fields.Selection(
         [
             ("draft", "Draft"),
             ("paid", "Paid"),
@@ -64,24 +65,22 @@ class LawBilling(models.Model):
         if self.case_id:
             self.client_id = self.case_id.client_id
 
-    # Mark as Paid
+    # Open wizard to confirm marking paid
     def action_mark_paid(self):
         self.ensure_one()
-        self.write({"status": "paid"})
-
-        if not self.invoice_id:
-            raise ValidationError("Invoice was not generated.")
-
-        invoice_report = self.env.ref("account.account_invoices", raise_if_not_found=False)
-        if invoice_report:
-            return invoice_report.report_action(self.invoice_id)
+        if self.status == "paid":
+            raise ValidationError("This billing is already marked as paid.")
 
         return {
+            "name": "Confirm Mark Paid",
             "type": "ir.actions.act_window",
-            "res_model": "account.move",
-            "res_id": self.invoice_id.id,
+            "res_model": "mark.paid.wizard",
             "view_mode": "form",
-            "target": "current",
+            "view_id": self.env.ref("My_law_firm.view_form_mark_paid_wizard").id,
+            "target": "new",
+            "context": {
+                "default_billing_id": self.id,
+            },
         }
 
     @api.model_create_multi
