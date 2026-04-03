@@ -1,5 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+from datetime import timedelta
 
 class LawBilling(models.Model):
     _name = "law.billing"
@@ -72,6 +73,26 @@ class LawBilling(models.Model):
         compute="_compute_amount_breakdown",
         store=True,
         readonly=True,
+    )
+
+    payment_term_days = fields.Integer(string="Payment Terms (Days)", default=10)
+
+    due_date = fields.Date(
+        string="Due Date",
+        compute="_compute_due_date",
+        store=True,
+    )
+
+    is_overdue = fields.Boolean(
+        string="Is Overdue:",
+        compute="_compute_is_overdue",
+        store=True,
+    )
+
+    days_overdue = fields.Integer(
+        string="Days Overdue",
+        compute="_compute_is_overdue",
+        store=True,
     )
 
     notes = fields.Html(string="Notes")
@@ -216,3 +237,24 @@ class LawBilling(models.Model):
         for rec in self:
             if rec.discount_percent < 0 or rec.discount_percent > 100:
                 raise ValidationError("Discount must be between 0 and 100.")
+            
+    @api.depends("billing_date_and_time", "payment_term_days")
+    def _compute_due_date(self):
+        for rec in self:
+            if rec.billing_date_and_time:
+                rec.due_date = rec.billing_date_and_time.date() + timedelta(days=rec.payment_term_days or 0)
+            else:
+                rec.due_date = False
+
+    @api.depends("due_date", "status")
+    def _compute_is_overdue(self):
+        today = fields.Date.today()
+        for rec in self:
+            rec.is_overdue = bool(rec.due_date and rec.status != "paid" and rec.due_date < today)
+            rec.days_overdue = (today - rec.due_date).days if rec.is_overdue else 0
+
+    @api.onchange("billing_date_and_time", "payment_term_days")
+    def _onchange_due_date(self):
+        for rec in self:
+            if rec.billing_date_and_time:
+                rec.due_date = rec.billing_date_and_time.date() + timedelta(days=rec.payment_term_days or 0)

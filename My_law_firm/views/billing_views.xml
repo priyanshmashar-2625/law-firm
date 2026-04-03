@@ -54,6 +54,10 @@
                             <field name="net_amount" readonly="1"/>
                             <field name="currency_id"/>
                             <field name="billing_date_and_time"/>
+                            <field name="payment_term_days"/>
+                            <field name="due_date" readonly="1"/>
+                            <field name="is_overdue" readonly="1"/>
+                            <field name="days_overdue" readonly="1"/>
                             <field name="status"/>
                             <field name="invoice_id" readonly="1"/>
                             <field name="report_attachment_id" readonly="1"/>
@@ -79,7 +83,33 @@
                     <field name="tax_amount"/>
                     <field name="net_amount"/>
                     <field name="status"/>
+                    <field name="due_date"/>
+                    <field name="is_overdue"/>
+                    <field name="days_overdue"/>
                 </list>
+            </field>
+        </record>
+
+        <record id="view_search_law_billing" model="ir.ui.view">
+            <field name="name">law.billing.search</field>
+            <field name="model">law.billing</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="case_id"/>
+                    <field name="client_id"/>
+                    <field name="status"/>
+                    <field name="due_date"/>
+                    <filter name="overdue_bills"
+                            string="Overdue Bills"
+                            domain="[('is_overdue', '=', True), ('status', '!=', 'paid')]"/>
+                    <filter name="due_today"
+                            string="Due Today"
+                            domain="[('due_date', '=', context_today())]"/>
+                    <filter name="group_by_due_date"
+                            string="Group by Due Date"
+                            context="{'group_by':'due_date'}"/>
+                </search>
             </field>
         </record>
 
@@ -87,6 +117,7 @@
             <field name="name">Billings</field>
             <field name="res_model">law.billing</field>
             <field name="view_mode">kanban,list,form</field>
+            <field name="search_view_id" ref="view_search_law_billing"/>
         </record>
 
         <record id="paperformat_law_billing" model="report.paperformat">
@@ -143,6 +174,9 @@
                             <p><strong>Tax Amount:</strong> <span t-esc="o.tax_amount"/></p>
                             <p><strong>Net Total:</strong> <span t-esc="o.net_amount"/></p>
                             <p><strong>Status:</strong> <span t-esc="o.status"/></p>
+                            <p><strong>Due Date:</strong> <span t-esc="o.due_date or '-'"/></p>
+                            <p><strong>Overdue:</strong> <span t-esc="'Yes' if o.is_overdue else 'No'"/></p>
+                            <p><strong>Days Overdue:</strong> <span t-esc="o.days_overdue"/></p>
                             <t t-if="o.invoice_id">
                                 <p><strong>Invoice Number:</strong> <span t-esc="o.invoice_id.name"/></p>
                                 <p><strong>Invoice Date:</strong> <span t-esc="o.invoice_id.invoice_date or '-'"/></p>
