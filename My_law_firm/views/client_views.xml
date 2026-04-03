@@ -31,6 +31,7 @@
                             <field name="email"/>
                             <field name="phone"/>
                             <field name="client_type"/>
+                            <field name="payment_term_id"/>
                         </group>
                         <group>
                             <field name="address"/>
@@ -57,6 +58,7 @@
                     <field name="email"/>
                     <field name="phone"/>
                     <field name="client_type"/>
+                    <field name="payment_term_id"/>
                 </list>
             </field>
         </record>

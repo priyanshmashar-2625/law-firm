@@ -42,6 +42,7 @@
                             <field name="name"/>
                             <field name="case_id"/>
                             <field name="client_id"/>
+                            <field name="payment_term_id"/>
                             <field name="billing_type"/>
                             <field name="discount_percent"/>
                             <field name="tax_ids" widget="many2many_tags"/>
@@ -79,6 +80,7 @@
                     <field name="name"/>
                     <field name="case_id"/>
                     <field name="amount"/>
+                    <field name="payment_term_id"/>
                     <field name="discount_percent"/>
                     <field name="tax_amount"/>
                     <field name="net_amount"/>

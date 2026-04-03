@@ -14,6 +14,11 @@ class LawCase(models.Model):
         required=True,
     )
 
+    payment_term_id = fields.Many2one(
+        comodel_name="account.payment.term",
+        string="Payment Term",
+    )
+
     opponent_name = fields.Char(string="Opponent Name")
 
     case_type = fields.Selection(
@@ -70,7 +75,17 @@ class LawCase(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             vals.setdefault("status", "active")
+            if not vals.get("payment_term_id") and vals.get("client_id"):
+                client = self.env["law.client"].browse(vals["client_id"])
+                if client.payment_term_id:
+                    vals["payment_term_id"] = client.payment_term_id.id
         return super().create(vals_list)
+    
+    @api.onchange("client_id")
+    def _onchange_client_id(self):
+        for rec in self:
+            if rec.client_id and rec.client_id.payment_term_id:
+                rec.payment_term_id = rec.client_id.payment_term_id
     
     #update next hearing date automatically
     def update_next_hearing(self):
@@ -149,6 +164,7 @@ class LawCase(models.Model):
             "invoice_origin": self.case_number or self.name,
             "currency_id": paid_bills[0].currency_id.id or self.env.company.currency_id.id,
             "invoice_line_ids": invoice_lines,
+            "invoice_payment_term_id":(self.payment_term_id.id or self.client_id.payment_term_id.id)
         }
         invoice = self.env["account.move"].create(invoice_vals)
         invoice.action_post()

@@ -47,6 +47,7 @@
                             <field name="case_number"/>
                             <field name="client_id"/>
                             <field name="opponent_name"/>
+                            <field name="payment_term_id"/>
                         </group>
                         <group>
                             <field name="case_type"/>
@@ -86,6 +87,7 @@
                     <field name="case_type"/>
                     <field name="status"/>
                     <field name="next_hearing_date"/>
+                    <field name="payment_term_id"/>
                 </list>
             </field>
         </record>

@@ -77,6 +77,11 @@ class LawBilling(models.Model):
 
     payment_term_days = fields.Integer(string="Payment Terms (Days)", default=10)
 
+    payment_term_id = fields.Many2one(
+        comodel_name="account.payment.term",
+        string="Payment Term"
+    )
+
     due_date = fields.Date(
         string="Due Date",
         compute="_compute_due_date",
@@ -114,6 +119,16 @@ class LawBilling(models.Model):
     def _onchange_case(self):
         if self.case_id:
             self.client_id = self.case_id.client_id
+            self.payment_term_id = (
+                self.case_id.payment_term_id or self.case_id.client_id.payment_term_id
+            )
+        elif self.client_id:
+            self.payment_term_id = self.client_id.payment_term_id
+
+    @api.onchange("client_id")
+    def _onchange_client(self):
+        if not self.case_id and self.client_id:
+            self.payment_term_id = self.client_id.payment_term_id
 
     # Open wizard to confirm marking paid
     def action_mark_paid(self):
@@ -199,6 +214,9 @@ class LawBilling(models.Model):
                         },
                     )
                 ],
+                "invoice_payment_term_id":(
+                    self.payment_term_id or self.client_id.payment_term_id.id
+                )
             }
             invoice = self.env["account.move"].create(invoice_vals)
             invoice.action_post()

@@ -20,6 +20,11 @@ class LawClient(models.Model):
 
     notes = fields.Html(string="Notes")
 
+    payment_term_id = fields.Many2one(
+        comodel_name="account.payment.term",
+        string="Payment Term",
+    )
+    
     case_ids = fields.One2many(
         comodel_name="law.case",
         inverse_name="client_id",
